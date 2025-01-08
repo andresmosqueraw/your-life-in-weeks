@@ -97,7 +97,9 @@ function LifeGrid() {
   useEffect(() => {
     if (birthDay && birthMonth && birthYear) {
       const newBirthDate = new Date(parseInt(birthYear), months.indexOf(birthMonth), parseInt(birthDay))
-      setBirthDate(newBirthDate)
+      if (!isNaN(newBirthDate.getTime())) { // Check if the date is valid
+        setBirthDate(newBirthDate)
+      }
     }
   }, [birthDay, birthMonth, birthYear])
 
@@ -206,7 +208,7 @@ function LifeGrid() {
               <SelectValue placeholder="Día" />
             </SelectTrigger>
             <SelectContent className="max-h-[200px] overflow-y-auto select-content">
-              {days.map((day) => (
+              {days.slice(0, 31).map((day) => (
                 <SelectItem key={day} value={day}>
                   {day}
                 </SelectItem>
@@ -218,7 +220,7 @@ function LifeGrid() {
               <SelectValue placeholder="Mes" />
             </SelectTrigger>
             <SelectContent className="max-h-[200px] overflow-y-auto select-content">
-              {months.map((month) => (
+              {months.slice(0, 12).map((month) => (
                 <SelectItem key={month} value={month}>
                   {month}
                 </SelectItem>
@@ -230,7 +232,7 @@ function LifeGrid() {
               <SelectValue placeholder="Año" />
             </SelectTrigger>
             <SelectContent className="max-h-[200px] overflow-y-auto select-content">
-              {years.map((year) => (
+              {years.slice(-100).map((year) => (
                 <SelectItem key={year} value={year}>
                   {year}
                 </SelectItem>
