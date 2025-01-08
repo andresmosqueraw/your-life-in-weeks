@@ -16,6 +16,7 @@ import {
 import { motion } from "framer-motion"
 import { ImageIcon } from 'lucide-react'
 import { globalCss } from '@stitches/react'
+import CustomTooltip from "@/components/ui/custom-tooltip"
 
 const globalStyles = globalCss({
   '.select-content': {
@@ -292,24 +293,8 @@ function LifeGrid() {
                   (age === currentProgress.currentAge && week <= currentProgress.currentWeek)
                 )
                 return (
-                  <Tooltip key={`${age}-${week}`}>
-                    <TooltipTrigger asChild>
-                      <motion.div
-                        className={`h-2.5 w-2.5 border border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-800 cursor-pointer m-[3px] ${
-                          isCurrentWeek ? 'bg-blue-500 hover:bg-blue-600' : 
-                          cellEvents.length > 0 ? 'bg-green-500 hover:bg-green-600' : 
-                          isPastWeek ? 'bg-red-200 dark:bg-red-800' : ''
-                        }`}
-                        onClick={() => handleCellClick(age, week)}
-                        whileHover={{ scale: 1.2 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 10 }}
-                      >
-                        {cellEvents.some(event => event.images.length > 0) && (
-                          <ImageIcon className="w-2 h-2 text-white absolute top-0 right-0" />
-                        )}
-                      </motion.div>
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-md bg-white dark:bg-gray-800 text-black dark:text-white">
+                  <CustomTooltip key={`${age}-${week}`} content={
+                    <div className="max-w-md bg-white dark:bg-gray-800 text-black dark:text-white">
                       <p>Edad: {age} años y {week} semanas</p>
                       <p>Semana de tu vida: {age * 52 + week - 3}</p>
                       {isCurrentWeek && currentProgress && (
@@ -337,10 +322,10 @@ function LifeGrid() {
                                         alt={`${event.name} - Image ${index + 1}`} 
                                         className="w-16 h-16 object-cover rounded cursor-pointer" 
                                         onClick={(e) => {
-                                          e.preventDefault()
-                                          e.stopPropagation()
-                                          setSelectedImages(event.images)
-                                          setSelectedEventName(event.name)
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          setSelectedImages(event.images);
+                                          setSelectedEventName(event.name);
                                         }}
                                       />
                                     ))}
@@ -355,8 +340,23 @@ function LifeGrid() {
                         <p>Haz clic para agregar un evento</p>
                       )}
                       {isPastWeek && <p className="font-bold text-red-500">Esta semana ya pasó</p>}
-                    </TooltipContent>
-                  </Tooltip>
+                    </div>
+                  }>
+                    <motion.div
+                      className={`h-2.5 w-2.5 border border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-800 cursor-pointer m-[3px] ${
+                        isCurrentWeek ? 'bg-blue-500 hover:bg-blue-600' : 
+                        cellEvents.length > 0 ? 'bg-green-500 hover:bg-green-600' : 
+                        isPastWeek ? 'bg-red-200 dark:bg-red-800' : ''
+                      }`}
+                      onClick={() => handleCellClick(age, week)}
+                      whileHover={{ scale: 1.2 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                    >
+                      {cellEvents.some(event => event.images.length > 0) && (
+                        <ImageIcon className="w-2 h-2 text-white absolute top-0 right-0" />
+                      )}
+                    </motion.div>
+                  </CustomTooltip>
                 )
               })}
             </div>
