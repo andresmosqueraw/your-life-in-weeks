@@ -21,7 +21,7 @@ export function Navbar() {
   }
 
   return (
-    <nav className="flex justify-between items-center py-4 px-6 bg-white dark:bg-zinc-800 shadow-sm">
+    <nav className="flex justify-between items-center py-4 px-6 bg-white dark:bg-zinc-950 shadow-sm">
       <div className="flex items-center">
         <Square className="h-6 w-6 mr-2" />
         <div className="text-xl font-bold">Your Life in Weeks</div>

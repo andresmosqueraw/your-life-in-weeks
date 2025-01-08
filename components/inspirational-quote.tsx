@@ -21,7 +21,7 @@ export function InspirationalQuote() {
 
   return (
     <motion.p
-      className="text-xl text-zinc-600 dark:text-zinc-400 mt-4"
+      className="text-lg text-zinc-600 dark:text-zinc-400 mt-4"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}

@@ -172,7 +172,7 @@ function LifeGrid() {
   }, [currentProgress])
 
   return (
-    <div className="relative mx-auto max-w-[650px] p-4 bg-white dark:bg-zinc-950 text-black dark:text-white">
+    <div className="relative mx-auto max-w-[550px] p-4 bg-white dark:bg-zinc-950 text-black dark:text-white">
       {showEventModal && selectedCell && (
         <EventModal
           isOpen={showEventModal}
@@ -198,7 +198,7 @@ function LifeGrid() {
         />
       )}
 
-      <div className="mt-4 mb-8 text-center">
+      <div className="mb-8 text-center">
         <h2 className="text-xl font-bold mb-4">Fecha de nacimiento</h2>
         <div className="flex justify-center space-x-4">
           <Select value={birthDay} onValueChange={setBirthDay}>
@@ -250,8 +250,8 @@ function LifeGrid() {
       </div>
 
       {/* Axis Labels */}
-      <div className="absolute -left-36 top-1/2 -rotate-90 transform whitespace-nowrap text-lg font-bold">
-        Edad
+      <div className="absolute -left-24 top-1/2 -rotate-90 transform whitespace-nowrap text-lg font-bold">
+        ⟵────── Edad 
       </div>
       <div className="mb-4 text-center text-lg font-bold">
         Semana ───────⟶
@@ -261,11 +261,11 @@ function LifeGrid() {
         <div className="grid mt-8 justify-center items-center">
           {/* Header row with week numbers */}
           <div className="flex">
-            <div className="h-2.5 w-2.5 m-[3px]" /> {/* Empty corner cell */}
+            <div className="h-2 w-2 m-[1px]" /> {/* Empty corner cell */}
             {weeks.map((week) => (
               <div
                 key={week}
-                className="flex h-2.5 w-2.5 items-center justify-center text-[10px] m-[3px] font-medium"
+                className="flex h-2 w-2 items-center justify-center text-[12px] m-[1px] font-medium"
               >
                 {week % 5 === 0 ? week : ""}
               </div>
@@ -277,7 +277,7 @@ function LifeGrid() {
             <div key={age} className="flex">
               {/* Age label - show all numbers but only make visible every 5 years */}
               <div 
-                className="flex h-3 w-3 items-center justify-center text-[10px] font-medium"
+                className="flex h-2 w-2 items-center justify-center text-[12px] font-medium mr-1"
                 style={{
                   visibility: age % 5 === 0 ? 'visible' : 'hidden'
                 }}
@@ -343,17 +343,17 @@ function LifeGrid() {
                     </div>
                   }>
                     <motion.div
-                      className={`h-2.5 w-2.5 border border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-800 cursor-pointer m-[3px] ${
+                      className={`h-2 w-2 border border-zinc-400 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-800 cursor-pointer m-[1px] ${
                         isCurrentWeek ? 'bg-blue-500 hover:bg-blue-600' : 
                         cellEvents.length > 0 ? 'bg-green-500 hover:bg-green-600' : 
-                        isPastWeek ? 'bg-red-200 dark:bg-red-800' : ''
+                        isPastWeek ? 'bg-red-600 dark:bg-red-800' : ''
                       }`}
                       onClick={() => handleCellClick(age, week)}
                       whileHover={{ scale: 1.2 }}
                       transition={{ type: "spring", stiffness: 300, damping: 10 }}
                     >
                       {cellEvents.some(event => event.images.length > 0) && (
-                        <ImageIcon className="w-2 h-2 text-white absolute top-0 right-0" />
+                        <ImageIcon className="w-1.5 h-1.5 text-white absolute top-0 right-0" />
                       )}
                     </motion.div>
                   </CustomTooltip>
