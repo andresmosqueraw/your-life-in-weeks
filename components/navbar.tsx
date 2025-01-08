@@ -3,8 +3,9 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { toast } from "@/components/use-toast"
+import { toast } from "@/components/ui/use-toast"
 import { Square } from 'lucide-react'
+import { ThemeToggle } from "./theme-toggle"
 
 export function Navbar() {
   const [email, setEmail] = useState("")
@@ -25,18 +26,20 @@ export function Navbar() {
         <Square className="h-6 w-6 mr-2" />
         <div className="text-xl font-bold">Your Life in Weeks</div>
       </div>
-      <form onSubmit={handleSubmit} className="flex gap-2">
-        <Input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="max-w-[200px]"
-        />
-        <Button type="submit">Subscribe</Button>
-      </form>
+      <div className="flex items-center space-x-4">
+        <ThemeToggle />
+        <form onSubmit={handleSubmit} className="flex gap-2">
+          <Input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="max-w-[200px]"
+          />
+          <Button type="submit">Subscribe</Button>
+        </form>
+      </div>
     </nav>
   )
 }
-

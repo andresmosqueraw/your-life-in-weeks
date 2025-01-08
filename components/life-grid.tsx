@@ -1,11 +1,11 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { BirthDateModal } from "./birth-date-modal"
 import { EventModal } from "./event-modal"
 import { ImageModal } from "./image-modal"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { format, addDays, differenceInDays, differenceInWeeks, isLeapYear } from "date-fns"
 import {
   Tooltip,
@@ -15,6 +15,25 @@ import {
 } from "@/components/ui/tooltip"
 import { motion } from "framer-motion"
 import { ImageIcon } from 'lucide-react'
+import { globalCss } from '@stitches/react'
+
+const globalStyles = globalCss({
+  '.select-content': {
+    '&::-webkit-scrollbar': {
+      width: '8px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#f1f1f1',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: '#888',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#555',
+    },
+  },
+});
 
 interface Event {
   id: string
@@ -43,8 +62,11 @@ const defaultEvents: Event[] = [
 ]
 
 function LifeGrid() {
+  globalStyles();
   const [birthDate, setBirthDate] = useState<Date | null>(null)
-  const [showBirthDateModal, setShowBirthDateModal] = useState(true)
+  const [birthDay, setBirthDay] = useState<string>("")
+  const [birthMonth, setBirthMonth] = useState<string>("")
+  const [birthYear, setBirthYear] = useState<string>("")
   const [showEventModal, setShowEventModal] = useState(false)
   const [selectedCell, setSelectedCell] = useState<{ age: number; week: number } | null>(null)
   const [events, setEvents] = useState<Event[]>(defaultEvents)
@@ -58,18 +80,25 @@ function LifeGrid() {
   // Generate weeks from 1 to 52
   const weeks = Array.from({ length: 52 }, (_, i) => i + 1)
 
-  const handleBirthDateSubmit = (date: Date | null) => {
-    setBirthDate(date || new Date(2000, 0, 1))
-    setShowBirthDateModal(false)
-  }
+  // Generate days from 1 to 31
+  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString())
 
-  const handleEditBirthDate = () => {
-    setShowBirthDateModal(true)
-  }
+  // Generate months
+  const months = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+  ]
 
-  const handleCloseBirthDateModal = () => {
-    setShowBirthDateModal(false)
-  }
+  // Generate years from 1900 to current year
+  const currentYear = new Date().getFullYear()
+  const years = Array.from({ length: currentYear - 1899 }, (_, i) => (1900 + i).toString())
+
+  useEffect(() => {
+    if (birthDay && birthMonth && birthYear) {
+      const newBirthDate = new Date(parseInt(birthYear), months.indexOf(birthMonth), parseInt(birthDay))
+      setBirthDate(newBirthDate)
+    }
+  }, [birthDay, birthMonth, birthYear])
 
   const handleCellClick = (age: number, week: number) => {
     setSelectedCell({ age, week })
@@ -142,14 +171,7 @@ function LifeGrid() {
   }, [currentProgress])
 
   return (
-    <div className="relative mx-auto max-w-[650px]">
-      {showBirthDateModal && (
-        <BirthDateModal 
-          onBirthDateSubmit={handleBirthDateSubmit} 
-          onClose={handleCloseBirthDateModal}
-          initialDate={birthDate || undefined}
-        />
-      )}
+    <div className="relative mx-auto max-w-[650px] p-4 bg-white dark:bg-zinc-950 text-black dark:text-white">
       {showEventModal && selectedCell && (
         <EventModal
           isOpen={showEventModal}
@@ -176,17 +198,45 @@ function LifeGrid() {
       )}
 
       <div className="mt-4 mb-8 text-center">
-        <p className="mt-2">
-          Fecha de nacimiento: {birthDate ? format(birthDate, "PPP") : "No seleccionada"}
-          <Button 
-            onClick={handleEditBirthDate}
-            variant="outline"
-            size="sm"
-            className="ml-2"
-          >
-            Editar
-          </Button>
-        </p>
+        <h2 className="text-xl font-bold mb-4">Fecha de nacimiento</h2>
+        <div className="flex justify-center space-x-4">
+          <Select value={birthDay} onValueChange={setBirthDay}>
+            <SelectTrigger className="w-[80px]">
+              <SelectValue placeholder="Día" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[200px] overflow-y-auto select-content">
+              {days.map((day) => (
+                <SelectItem key={day} value={day}>
+                  {day}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={birthMonth} onValueChange={setBirthMonth}>
+            <SelectTrigger className="w-[120px]">
+              <SelectValue placeholder="Mes" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[200px] overflow-y-auto select-content">
+              {months.map((month) => (
+                <SelectItem key={month} value={month}>
+                  {month}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={birthYear} onValueChange={setBirthYear}>
+            <SelectTrigger className="w-[80px]">
+              <SelectValue placeholder="Año" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[200px] overflow-y-auto select-content">
+              {years.map((year) => (
+                <SelectItem key={year} value={year}>
+                  {year}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
       {/* Barra de progreso de la vida */}
@@ -243,7 +293,7 @@ function LifeGrid() {
                 )
                 return (
                   <Tooltip key={`${age}-${week}`}>
-                    <TooltipTrigger>
+                    <TooltipTrigger asChild>
                       <motion.div
                         className={`h-2.5 w-2.5 border border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-800 cursor-pointer m-[3px] ${
                           isCurrentWeek ? 'bg-blue-500 hover:bg-blue-600' : 
@@ -259,7 +309,7 @@ function LifeGrid() {
                         )}
                       </motion.div>
                     </TooltipTrigger>
-                    <TooltipContent className="max-w-md">
+                    <TooltipContent className="max-w-md bg-white dark:bg-gray-800 text-black dark:text-white">
                       <p>Edad: {age} años y {week} semanas</p>
                       <p>Semana de tu vida: {age * 52 + week - 3}</p>
                       {isCurrentWeek && currentProgress && (
@@ -340,4 +390,3 @@ function LifeGrid() {
 }
 
 export { LifeGrid }
-
