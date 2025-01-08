@@ -12,12 +12,34 @@ export function Navbar() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Email submitted:", email)
-    toast({
-      title: "Subscribed!",
-      description: "Thank you for your interest. We'll keep you updated!",
-    })
-    setEmail("")
+    try {
+      const response = await fetch('/api/sendEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      if (response.ok) {
+        toast({
+          title: "Subscribed!",
+          description: "Thank you for your interest. We'll keep you updated!",
+        })
+        setEmail("")
+      } else {
+        toast({
+          title: "Error",
+          description: "There was an error subscribing. Please try again.",
+        })
+      }
+    } catch (error) {
+      console.error(error)
+      toast({
+        title: "Error",
+        description: "There was an error subscribing. Please try again.",
+      })
+    }
   }
 
   return (
