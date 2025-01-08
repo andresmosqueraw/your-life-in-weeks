@@ -1,16 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { X, ImageIcon, PlusCircle, Trash2 } from 'lucide-react'
+import { X, PlusCircle, Trash2 } from 'lucide-react'
+import Image from 'next/image'
 
 interface Event {
   name: string
@@ -25,11 +25,10 @@ interface EventModalProps {
   onDelete: (eventId: string) => void
   age: number
   week: number
-  date: string
   existingEvents: Event[]
 }
 
-export function EventModal({ isOpen, onClose, onSubmit, onDelete, age, week, date, existingEvents }: EventModalProps) {
+export function EventModal({ isOpen, onClose, onSubmit, onDelete, age, week, existingEvents }: EventModalProps) {
   const [eventName, setEventName] = useState("")
   const [images, setImages] = useState<string[]>([])
 
@@ -88,7 +87,14 @@ export function EventModal({ isOpen, onClose, onSubmit, onDelete, age, week, dat
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {event.images.map((image, index) => (
-                        <img key={index} src={image} alt={`${event.name} - Image ${index + 1}`} className="w-16 h-16 object-cover rounded" />
+                        <Image
+                          key={index}
+                          src={image}
+                          alt={`${event.name} - Image ${index + 1}`}
+                          width={64}
+                          height={64}
+                          className="object-cover rounded"
+                        />
                       ))}
                     </div>
                   </li>
@@ -124,7 +130,13 @@ export function EventModal({ isOpen, onClose, onSubmit, onDelete, age, week, dat
               <div className="flex flex-wrap gap-2">
                 {images.map((image, index) => (
                   <div key={index} className="relative">
-                    <img src={image} alt={`Preview ${index + 1}`} className="w-16 h-16 object-cover rounded" />
+                    <Image
+                      src={image}
+                      alt={`Preview ${index + 1}`}
+                      width={64}
+                      height={64}
+                      className="object-cover rounded"
+                    />
                     <button
                       type="button"
                       onClick={() => removeImage(index)}

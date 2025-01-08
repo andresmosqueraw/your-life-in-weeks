@@ -1,22 +1,17 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import { EventModal } from "./event-modal"
 import { ImageModal } from "./image-modal"
-import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { format, addDays, differenceInDays, differenceInWeeks, isLeapYear } from "date-fns"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { differenceInDays } from "date-fns"
 import { motion } from "framer-motion"
 import { ImageIcon } from 'lucide-react'
 import { globalCss } from '@stitches/react'
 import CustomTooltip from "@/components/ui/custom-tooltip"
+import Image from 'next/image'
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 const globalStyles = globalCss({
   '.select-content': {
@@ -84,11 +79,11 @@ function LifeGrid() {
   // Generate days from 1 to 31
   const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString())
 
-  // Generate months
-  const months = [
+  // Use useMemo to memoize months
+  const months = useMemo(() => [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-  ]
+  ], [])
 
   // Generate years from 1900 to current year
   const currentYear = new Date().getFullYear()
@@ -101,7 +96,7 @@ function LifeGrid() {
         setBirthDate(newBirthDate)
       }
     }
-  }, [birthDay, birthMonth, birthYear])
+  }, [birthDay, birthMonth, birthYear, months])
 
   const handleCellClick = (age: number, week: number) => {
     setSelectedCell({ age, week })
@@ -157,13 +152,6 @@ function LifeGrid() {
     }
   }
 
-  const getDateForWeek = (age: number, week: number): string => {
-    if (!birthDate) return ""
-    const weekStart = addDays(birthDate, (age * 52 + week - 1) * 7)
-    const weekEnd = addDays(weekStart, 6)
-    return `${format(weekStart, "d MMM")} - ${format(weekEnd, "d MMM, yyyy")}`
-  }
-
   const currentProgress = birthDate ? calculateLifeProgress(birthDate) : null
 
   useEffect(() => {
@@ -183,7 +171,6 @@ function LifeGrid() {
           onDelete={handleEventDelete}
           age={selectedCell.age}
           week={selectedCell.week}
-          date={getDateForWeek(selectedCell.age, selectedCell.week)}
           existingEvents={events.filter(e => e.age === selectedCell.age && e.week === selectedCell.week)}
         />
       )}
@@ -310,19 +297,21 @@ function LifeGrid() {
                       )}
                       {cellEvents.length > 0 && (
                         <>
-                          <p>Eventos:</p>
-                          <ul className="list-disc pl-4">
+                          <p className="text-left ml-2">Eventos:</p>
+                          <ul className="list-disc space-y-2 pl-4 ml-2">
                             {cellEvents.map(event => (
-                              <li key={event.id} className="flex flex-col space-y-2">
-                                <span>{event.name}</span>
+                              <li key={event.id} className="text-left">
+                                {event.name}
                                 {event.images.length > 0 && (
-                                  <div className="flex flex-wrap gap-2">
+                                  <div className="flex flex-wrap gap-2 mt-2">
                                     {event.images.map((image, index) => (
-                                      <img 
+                                      <Image 
                                         key={index} 
                                         src={image} 
                                         alt={`${event.name} - Image ${index + 1}`} 
-                                        className="w-16 h-16 object-cover rounded cursor-pointer" 
+                                        width={64}
+                                        height={64}
+                                        className="object-cover rounded cursor-pointer" 
                                         onClick={(e) => {
                                           e.preventDefault();
                                           e.stopPropagation();

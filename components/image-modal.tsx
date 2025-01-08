@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import Image from 'next/image'
 
 interface ImageModalProps {
   isOpen: boolean
@@ -28,10 +29,12 @@ export function ImageModal({ isOpen, onClose, images, eventName }: ImageModalPro
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px] sm:max-h-[80vh] p-0">
         <div className="relative">
-          <img 
+          <Image 
             src={images[currentIndex]} 
             alt={`${eventName} - Image ${currentIndex + 1}`} 
-            className="w-full h-[500px] object-contain"
+            width={600}
+            height={500}
+            className="object-contain"
           />
           <div className="absolute top-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2">
             <h2 className="text-lg font-semibold">{eventName}</h2>
